@@ -1,9 +1,10 @@
 // src/routes/authRoutes.ts
 import { Router } from "express";
-import User, { IUser } from "../models/user";
+import { User, IUser } from "../models/user";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import CustomError from "../errors/customError";
+import { Cart } from "../models/cart";
 
 const router = Router();
 
@@ -18,8 +19,10 @@ router.post("/register", async (req, res, next) => {
             throw new CustomError("User already exists", 400);
         }
 
-        // Create a new user
+        // Create a new user and cart
         const newUser: IUser = new User({ username, email, password });
+        const newCart = await Cart.create({ user: newUser });
+        newUser.cart = newCart;
         await newUser.save();
 
         // Create and send a JWT token upon successful registration
@@ -36,9 +39,10 @@ router.post("/register", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        console.log(req.body);
 
         // Find the user by email
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("password");
 
         if (!user) {
             throw new CustomError("Authentication failed", 401);

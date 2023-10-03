@@ -1,17 +1,37 @@
 // src/models/user.ts
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
+import { ICart } from "./cart";
 
 export interface IUser extends Document {
     username: string;
     email: string;
     password: string;
+    cart: ICart;
 }
 
 const userSchema: Schema = new Schema({
-    username: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
+    cart: {
+        type: Schema.Types.ObjectId,
+        ref: "Cart",
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
+    password: {
+        type: String,
+        required: true,
+        select: false,
+    },
 });
 
 // Hash the user's password before saving it to the database
@@ -26,4 +46,4 @@ userSchema.pre<IUser>("save", async function (next) {
     }
 });
 
-export default mongoose.model<IUser>("User", userSchema);
+export const User = mongoose.model<IUser>("User", userSchema);
