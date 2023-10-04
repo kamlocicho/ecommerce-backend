@@ -1,10 +1,6 @@
-# Project Name
+# Ecommerce backend
 
-Simple express.js starter, uses mongoose, pnpm and typescript.
-
-## Getting Started
-
-Project includes simple authentication, example protected route, Custom error solution and logger.
+Simple express.js application using Typescript, MongoDB, JWT authentication bundled with docker.
 
 ### Prerequisites
 
